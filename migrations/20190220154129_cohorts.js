@@ -5,8 +5,9 @@ exports.up = function(knex, Promise) {
         tbl.increments();
 
         //set the name column as varchar with required text
-        tbl.string('name', 255).notNullable();
-    })
+        tbl.string('name', 255)
+        .notNullable();
+    });
   
 };
 
