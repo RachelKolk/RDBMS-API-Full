@@ -7,7 +7,7 @@ module.exports = {
     connection: {
       filename: './data/lambda.db3',
     },
-    useNullAsDefualt: true,
+    useNullAsDefault: true,
   },
 
 };

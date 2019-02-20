@@ -1,16 +1,10 @@
 const express = require('express');
 const helmet = require('helmet');
 const knex = require('knex');
+const knexConfig = require('./knexfile.js');
 
-const knexConfig = {
-    client: 'sqlite',
-    connection: {
-        filename: './data/lambda.db3',
-    },
-    useNullAsDefault: true,
-};
 
-const db = knex(knexConfig);
+const db = knex(knexConfig.development);
 
 const server = express();
 
