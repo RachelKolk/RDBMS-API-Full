@@ -68,13 +68,27 @@ server.get('/api/cohorts/:id', async (req, res) => {
     }
 });
 
-//GET entries from the api/cohorts table by matching it with student id
-// server.get('/api/cohorts/:id/students', async (req, res) => {
-//     try {
-//         const studentList = await db('cohorts')
+//GET entries from the api/cohorts and students tables by matching it with cohort id 
+//returns a list of students in that particular cohort
+server.get('/api/cohorts/:id/students', async (req, res) => {
+    try {
+        const id = req.params.id
         
-//     }
-// })
+        const studentList = await db('students')
+        .join('cohorts', 'cohorts.id', 'students.cohortId')
+        .select('students.name', 'students.cohortId')
+        .where('students.cohortId', id);
+
+        if (studentList.length > 0) {
+            res.status(200).json(studentList)
+        } else {
+            res.status(404).json({message: "That cohort has no students"});
+        }
+
+    } catch (error) {
+        res.status(500).json({error: "There was an error while retrieving the data"});
+    }
+});
 
 
 //  <<<<<<<<<<<<<<<<<<<<<<<<  Update Requests  >>>>>>>>>>>>>>>>>>>>>>>>>>>>
