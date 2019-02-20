@@ -18,6 +18,26 @@ server.use(helmet());
 server.use(express.json());
 
 
+//  <<<<<<<<<<<<<<<<<<<<<<<<  Create Requests  >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+//POST to the api/cohorts table
+server.post('/api/cohorts', async (req, res) => {
+    try {
+        if (req.body.name == '' || req.body.name == null) {
+            res.status(406).json({message: "Please don't leave the cohort name blank"});
+        } else {
+            const [id] = await db('cohorts')
+            .insert(req.body);
+
+            res.status(201).json(id);
+        }
+
+    } catch (error) {
+        res.status(500).json({error: "There was an issue with adding that cohort"});
+    }
+});
+
+
 //  <<<<<<<<<<<<<<<<<<<<<<<<  Receive Requests  >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 //GET all entries from the api/cohorts table
@@ -45,6 +65,59 @@ server.get('/api/cohorts/:id', async (req, res) => {
 
     } catch (error) {
         res.status(500).json(error);
+    }
+});
+
+//GET entries from the api/cohorts table by matching it with student id
+// server.get('/api/cohorts/:id/students', async (req, res) => {
+//     try {
+//         const studentList = await db('cohorts')
+        
+//     }
+// })
+
+
+//  <<<<<<<<<<<<<<<<<<<<<<<<  Update Requests  >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+//PUT an updated item into the api/cohorts table - requires id
+server.put('/api/cohorts/:id', async (req, res) => {
+    try {
+        const updates = await db('cohorts')
+        .where({id: req.params.id})
+        .update(req.body);
+
+        if (updates > 0) {
+            const cohort = await db('cohorts')
+            .where({id: req.params.id})
+            .first()
+            res.status(200).json(cohort);
+        } else {
+            res.status(404).json({message: "That cohort does not exist"});
+        }
+
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
+
+//  <<<<<<<<<<<<<<<<<<<<<<<<  Delete Requests  >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+//DELETES an item from the api/cohorts table - requires id
+server.delete('/api/cohorts/:id', async (req, res) => {
+    try {
+        const count = await db('cohorts')
+        .where({id: req.params.id})
+        .del();
+
+        if (count > 0) {
+            res.status(202).json({message: "That cohort has been deleted from the database"});
+        } else {
+            res.status(404).json({message: "That cohort does not exist"});
+        }
+
+    } catch (error) {
+        res.status(500).json({message: "An error occurred during deletion"});
     }
 });
 
